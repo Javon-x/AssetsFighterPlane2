@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
 public class GameManager : MonoBehaviour
 {
+
     public GameObject playerPrefab;
     public GameObject enemyOnePrefab;
     public GameObject cloudPrefab;
-    public GameObject coinPrefab;
     public int score;
+    public int lives;
     public int cloudsMove;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI livesText;
-
+    public GameObject coinPrefab;
+    public GameObject PowerupPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -22,9 +25,12 @@ public class GameManager : MonoBehaviour
         CreateSky();
         InvokeRepeating("SpawnEnemyOne", 1f, 2f);
         InvokeRepeating("SpawnCoin", 1.0f, 7.0f);
+        InvokeRepeating("SpawnPowerup", 1.0f, 7.0f);
         cloudsMove = 1;
         score = 0;
         scoreText.text = "Score: " + score;
+        lives = 3;
+        livesText.text = "Lives: " + lives;
     }
 
     // Update is called once per frame
@@ -45,10 +51,13 @@ public class GameManager : MonoBehaviour
             Instantiate(cloudPrefab, new Vector3(Random.Range(-11f, 11f), Random.Range(-7.5f, 7.5f), 0), Quaternion.identity);
         }
     }
-
-     void SpawnCoin()
+    void SpawnCoin()
     {
         Instantiate(coinPrefab, new Vector3(Random.Range(-8, 8), 7, 0), Quaternion.identity);
+    }
+    void SpawnPowerup()
+    {
+        Instantiate(PowerupPrefab, new Vector3(Random.Range(-8, 8), 7, 0), Quaternion.identity);
     }
 
     public void GameOver()
@@ -63,4 +72,3 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Score: " + score;
     }
 }
-

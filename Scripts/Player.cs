@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -12,11 +13,17 @@ public class Player : MonoBehaviour
     public int lives;
     public int coinValue = 1;
 
+    public TextMeshProUGUI livesText;
+
+    public GameObject Shield; // Initialize this in the Unity Editor by dragging the Shield object into this field
+
     // Start is called before the first frame update
     void Start()
     {
         playerSpeed = 6f;
         lives = 3;
+        livesText = GameObject.FindWithTag("GameManager").GetComponent<GameManager>().livesText;
+        livesText.text = "Lives: " + lives;
     }
 
     // Update is called once per frame
@@ -36,7 +43,8 @@ public class Player : MonoBehaviour
         if (transform.position.y < -verticalScreenLimit)
         {
             transform.position = new Vector3(transform.position.x, -verticalScreenLimit, 0);
-        } else if (transform.position.y >= 0)
+        }
+        else if (transform.position.y >= 0)
         {
             transform.position = new Vector3(transform.position.x, 0, 0);
         }
@@ -44,7 +52,7 @@ public class Player : MonoBehaviour
 
     void Shooting()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             Instantiate(bulletPrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
         }
@@ -53,30 +61,34 @@ public class Player : MonoBehaviour
     public void LoseLife()
     {
         lives--;
-        //lives -= 1;
-        //lives = lives - 1;
-        if (lives <= 0) 
+        livesText.text = "Lives: " + lives;
+
+        if (lives <= 0)
         {
-            //Game Over
+            // Game Over
             GameObject.Find("GameManager").GetComponent<GameManager>().GameOver();
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             Destroy(this.gameObject);
         }
     }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other != null && other.CompareTag("Coin"))
         {
-            // Assuming "Coin" is the tag for your coin objects
             GameManager gameManager = GameObject.Find("GameManager")?.GetComponent<GameManager>();
 
-        if (gameManager != null)
-        {
-            gameManager.EarnScore(coinValue);
+            if (gameManager != null)
+            {
+                gameManager.EarnScore(coinValue);
+            }
+
+            Destroy(other.gameObject); // Destroy the coin when collected
         }
-
-        Destroy(other.gameObject); // Destroy the coin when collected
     }
-}
 
+    public void ActiveShield()
+    {
+        Shield.SetActive(true);
+    }
 }
